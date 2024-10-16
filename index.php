@@ -42,21 +42,32 @@
             parsedData[key] = value;
         });
 
-        // Build the HTML structure
-        const displayData = `
-            <h2>Invoice Details</h2>
-            <p><strong>Invoice ID:</strong> ${parsedData['A']}</p>
-            <p><strong>Client ID:</strong> ${parsedData['B']}</p>
-            <p><strong>Country:</strong> ${parsedData['C']}</p>
-            <p><strong>Document Type:</strong> ${parsedData['D']}</p>
-            <p><strong>Date:</strong> ${parsedData['F']}</p>
-            <p><strong>Invoice Number:</strong> ${parsedData['G']}</p>
-            <p><strong>Taxable Amount:</strong> ${parsedData['I7']} EUR</p>
-            <p><strong>VAT Amount:</strong> ${parsedData['I8']} EUR</p>
-            <p><strong>Net VAT:</strong> ${parsedData['N']} EUR</p>
-            <p><strong>Total Amount (including VAT):</strong> ${parsedData['O']} EUR</p>
-            <p><strong>Reference Code:</strong> ${parsedData['Q']}</p>
-        `;
+        // Map keys to human-readable titles
+        const keyTitles = {
+            A: "Invoice ID",
+            B: "Client ID",
+            C: "Country",
+            D: "Document Type",
+            E: "Series Code",
+            F: "Date",
+            G: "Invoice Number",
+            H: "Customer NIF or Reference",
+            I1: "Country of Tax",
+            I7: "Taxable Amount",
+            I8: "VAT Amount",
+            N: "Net VAT Amount",
+            O: "Total Amount (including VAT)",
+            Q: "Reference Code",
+            R: "Additional Reference Number"
+        };
+
+        // Build the HTML structure with both key and title
+        let displayData = "<h2>Invoice Details</h2><div>";
+        for (const key in parsedData) {
+            const title = keyTitles[key] || `Unknown (${key})`;
+            displayData += `<div><strong>${key} (${title}):</strong> ${parsedData[key]}</div>`;
+        }
+        displayData += "</div>";
 
         document.getElementById('result').innerHTML = displayData;
 
@@ -68,5 +79,7 @@
         console.error(err);
     }
 </script>
+
+
 </body>
     
