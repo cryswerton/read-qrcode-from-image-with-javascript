@@ -18,46 +18,55 @@
 </head>
 <body>
     <main>
-        <h1>Test</h1>
         <div id="reader"></div>
         <div id="result"></div>
     </main>
     <script>
-    
-        const scanner = new Html5QrcodeScanner('reader', { 
-            // Scanner will be initialized in DOM inside element with id of 'reader'
-            qrbox: {
-                width: 250,
-                height: 250,
-            },  // Sets dimensions of scanning box (set relative to reader element width)
-            fps: 20, // Frames per second to attempt a scan
+    const scanner = new Html5QrcodeScanner('reader', { 
+        qrbox: {
+            width: 250,
+            height: 250,
+        },
+        fps: 20,
+    });
+
+    scanner.render(success, error);
+
+    function success(result) {
+        console.log(result);
+
+        // Split the result into key-value pairs
+        const parsedData = {};
+        result.split('*').forEach(pair => {
+            const [key, value] = pair.split(':');
+            parsedData[key] = value;
         });
-    
-    
-        scanner.render(success, error);
-        // Starts scanner
-    
-        function success(result) {
-    
-            document.getElementById('result').innerHTML = `
-            <h2>Success!</h2>
-            <p><a href="${result}">${result}</a></p>
-            `;
-            // Prints result as a link inside result element
-    
-            scanner.clear();
-            // Clears scanning instance
-    
-            document.getElementById('reader').remove();
-            // Removes reader element from DOM since no longer needed
-        
-        }
-    
-        function error(err) {
-            console.error(err);
-            // Prints any errors to the console
-        }
-    
-    </script>
+
+        // Build the HTML structure
+        const displayData = `
+            <h2>Invoice Details</h2>
+            <p><strong>Invoice ID:</strong> ${parsedData['A']}</p>
+            <p><strong>Client ID:</strong> ${parsedData['B']}</p>
+            <p><strong>Country:</strong> ${parsedData['C']}</p>
+            <p><strong>Document Type:</strong> ${parsedData['D']}</p>
+            <p><strong>Date:</strong> ${parsedData['F']}</p>
+            <p><strong>Invoice Number:</strong> ${parsedData['G']}</p>
+            <p><strong>Taxable Amount:</strong> ${parsedData['I7']} EUR</p>
+            <p><strong>VAT Amount:</strong> ${parsedData['I8']} EUR</p>
+            <p><strong>Net VAT:</strong> ${parsedData['N']} EUR</p>
+            <p><strong>Total Amount (including VAT):</strong> ${parsedData['O']} EUR</p>
+            <p><strong>Reference Code:</strong> ${parsedData['Q']}</p>
+        `;
+
+        document.getElementById('result').innerHTML = displayData;
+
+        scanner.clear();
+        document.getElementById('reader').remove();
+    }
+
+    function error(err) {
+        console.error(err);
+    }
+</script>
 </body>
     
